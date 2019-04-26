@@ -4,12 +4,14 @@
 
 #an individual class
 class Course():
-    def __init__(self, cid, dep):
+    def __init__(self, cid, dep, wint, cd, qfr):
         self.dep = dep          #department
         self.cid = cid          #course ID
         self.prereqs = []       #list of prereqs (strings of their course ID's)
         self.days = []          #2D list with inner list equal to [day, start, end]
-        
+        self.wint = wint
+        self.cd = cd
+        self.qfr = qfr
         
 #a major/minor/concentration
 class Program():
