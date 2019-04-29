@@ -4,7 +4,7 @@
 
 #an individual class
 class Course():
-    def __init__(self, cid, dep, wint, cd, qfr, ch):
+    def __init__(self, cid, dep, wint, cd, qfr, ch, cat):
         self.dep = dep          #department
         self.cid = cid          #course ID
         self.prereqs = []       #list of prereqs (strings of their course ID's)
@@ -13,6 +13,7 @@ class Course():
         self.cd = cd
         self.qfr = qfr
         self.creditHours = ch
+        self.category = cat     #a string of the category it is in hum, ss, ns
 
     def __eq__(self, other):
         if self.cid == other.cid:
@@ -25,6 +26,8 @@ class Course():
             return True
         else:
             return False
+
+    
         
 #a major/minor/concentration
 class Program():
@@ -41,6 +44,7 @@ class Semester():
         self.classes = set()    #set of classes
         self.maxx = 16          #max credit hours unless they wanna do overtime
         self.hours = 0
+        self.taken = set()      #set of classes taken
 
     def addClass(self, clas):
         conflict = False
@@ -53,12 +57,14 @@ class Semester():
         if conflict == False and self.maxx >= (self.hours + clas.creditHours):
             self.classes.add(clas)
             self.hours += clas.creditHours
+            return True
+        return False
 
 #a students schedule
 class Schedule():
     def __init__(self, semLeft):
         self.semLeft = semLeft  #semesters left
-        self.taken = []         #courses already taken
+        self.taken = set()      #courses already taken mostly for ap purposes
         self.humanities = set() #set of department in humanities
         self.socialsci = set()  #set of department in social sciences
         self.natsci = set()     #set of department in natural sciences
@@ -74,12 +80,34 @@ class Schedule():
         self.taken.append(course.cid)
         
 
+def addClassToSchedule(course, schedule, semNum):   #semNum is a number of what semester we are adding this class
+    add = True
+    sem = schedule.sched[semNum]
+    for prereq in course.prereqs:
+        if prereq not in sem.taken:
+            add = False
+    if add == True and sem.addClass(course):
+        if semNum < len(self.sched)-1:
+            self.sched[semNum +1].taken.add(course)  #adds course to next semesters taken courses
+        if course.category == "hum":
+            schedule.humanities.add(course.dep)
+        elif course.category == "ss":
+            schedule.socialsci.add(course.dep)
+        else:
+            schedule.natsci.add(course.dep)
+        schedule.wint -= course.wint
+        schedule.cd -= course.cd
+        schedule.qfr -= course.qfr
+        return True
+    return False
+    
+
     
 #The constraints that need to be met for our AI are:
 #len(required) == 0
-#schedule.wint == 0
-#schedule.cd == 0
-#schedule.qfr == 0
+#schedule.wint <=  0
+#schedule.cd <= 0
+#schedule.qfr <= 0
 #len(schedule.humanities) >= 2
 #len(schedule.socialsci) >= 2
 #len(schedule.natsc)i >= 2
