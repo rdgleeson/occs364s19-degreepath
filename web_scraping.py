@@ -88,13 +88,24 @@ def main():
                 if(L[0]!=""):
                     newL.append(L)
         
-        
-        if(count ==1):
+        if (count == 54):
+            break
+        if(count == 1):
             count += 1
             continue
-        
-        print(len(newL))
-        if(len(newL)<=1):
+        #french, or latin american studies or middle east
+        if(count == 24 or count ==37 or count ==39 or count == 45):
+            counter+=1
+            
+        if (count == 50):
+            counter+=1
+            count += 1
+            print("here")
+            continue
+        print(len(newL), headers[counter])
+        print(count)
+        print(len(headers))
+        if(len(newL)<=1 and count!=20 and count!=32 and count!=37 and count!=43 and count!=48):
             continue
         else:
             df = pd.DataFrame.from_records(newL)
