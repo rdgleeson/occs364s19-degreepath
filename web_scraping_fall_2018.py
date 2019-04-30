@@ -19,8 +19,7 @@ import os
 
 def main():
     #url = 'http://www2.oberlin.edu/registrar/class-schedules/2019-2020/FINAL%20FALL%202019%204.19.19.rhtml.html'
-    #url = 'http://www2.oberlin.edu/registrar/class-schedules/2018-2019/FINAL%20FALL%202018%2010.31.rhtml.html'
-    url = 'http://www2.oberlin.edu/registrar/class-schedules/2017-2018/FINAL%20SPRING%202018%202.9.18.rhtml.html'
+    url = 'http://www2.oberlin.edu/registrar/class-schedules/2018-2019/FINAL%20FALL%202018%2010.31.rhtml.html'
     #Create a handle, page, to handle the contents of the website
     a = requests.get(url)
     soup = BeautifulSoup(a.text, 'lxml')
@@ -62,13 +61,8 @@ def main():
             #first 5 so [5: len(y)-6]
             newL = []
             for item in newArr:
-                
                 if(len(item)<=10):
                     continue
-                #print(item[0:4])
-                if(item[0:4]=='NUMB'):
-                    continue
-                
                 L = []
                 y = item.split(" ")
                 courseName = []
@@ -93,16 +87,14 @@ def main():
                         L.extend([professor])
                 if(L[0]!=""):
                     newL.append(L)
-            
+        
         if(len(newL)==0 or newL[0][0]=='NUMB'):
-            print(newL)
             continue
         
         if(newL[0][0]=='EXTRA'):
             break
         
         #french, or latin american studies or middle east
-        #fall 2019
         '''
         if(count ==3 or count == 17 or count == 18 or count == 24 or count ==37 or count ==39 or count == 45):
             counter+=1
@@ -118,25 +110,13 @@ def main():
         
         print(count)
         '''
-        #fall 2018
-        '''
+        
         if(count ==3 or count==30 or count==35 or count == 36 or count ==40 or count==41 or count ==44):
             counter+=1
             print(len(headers[counter]))
         if(count==17):
             count+=1
             counter+=2
-        '''
-        #spring 2019
-        '''
-        if(count==3 or count ==17 or count==18 or count==21 or count==29 or count ==34 or count ==35 or count ==41):
-            counter+=1
-        if (count == 17):
-            count+=1
-            continue
-        '''
-        if(count==28 or count==37 or count==38 or count ==44 or count ==49):
-            counter+=1
         print(len(newL), headers[counter])
         print(count)
         if(headers[counter]=='\xa0' or headers[counter]=='This program does not regularly offer courses in MENA. Please see the online catalog for a list of courses offered in other departments that apply toward this minor.'):
@@ -147,7 +127,7 @@ def main():
             df = pd.DataFrame.from_records(newL)
             data.append(df)
             result = pd.concat(data)
-            file = "class_schedules_spring_2018/" + headers[counter] + ".xlsx"
+            file = "class_schedules_fall_2018/" + headers[counter] + ".xlsx"
             writer = pd.ExcelWriter(file)
             result.to_excel(writer,"Sheet1")
             writer.save()
