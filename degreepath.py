@@ -5,6 +5,7 @@
 import sys
 import copy
 from queue import PriorityQueue
+import pandas
 
 #an individual class
 class Course():
@@ -27,7 +28,7 @@ class Course():
         else:
             return False
 
-    def __ne__(self, ,other):
+    def __ne__(self,other):
         if self.cid != other.cid:
             return True
         else:
@@ -122,6 +123,23 @@ def addClassToSchedule(course, schedule, semNum):   #semNum is a number of what 
 #len(schedule.natsc)i >= 2
 def main():
     #webscraping + initial user interface
+    
+    
+    for filename in os.listdir(directory):
+        if(filename==".DS_Store"):
+            continue
+        print(filename)
+        file = directory + "/" + filename
+        dataset = pandas.read_excel(file, names=names)
+        array = dataset.values
+        #game = array[:,0,1]
+        game = array[:,0:1]
+        
+        X = array[:,2:17]
+    
+    
+    
+    #####################################################################################################
     requiredList = [] #list of required courses based off major(s)/minor(s) chosen
     programList = []
     honors = 0    #binary to determine whether to leave room senior year for honors
