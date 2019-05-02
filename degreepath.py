@@ -2,18 +2,24 @@
 #Ryan Gleeson, Jay Messina, Marouane Abra
 #Last Updated: 3/26/19
 
+import sys
+import copy
+from queue import PriorityQueue
+
 #an individual class
 class Course():
     def __init__(self, cid, dep, wint, cd, qfr, ch, cat):
         self.dep = dep          #department
         self.cid = cid          #course ID
-        self.prereqs = []       #list of prereqs (strings of their course ID's)
+        self.prereqs = set()       #list of prereqs (strings of their course ID's)
         self.days = []          #2D list with inner list equal to [day, start, end]
         self.wint = wint
         self.cd = cd
         self.qfr = qfr
         self.creditHours = ch
         self.category = cat     #a string of the category it is in hum, ss, ns
+        self.programs = []
+        self.above = []         #a list of classes that this is the prereq of
 
     def __eq__(self, other):
         if self.cid == other.cid:
@@ -27,6 +33,9 @@ class Course():
         else:
             return False
 
+    def addProgram(self, prog):
+        self.programs.append(prog)
+
     
         
 #a major/minor/concentration
@@ -34,7 +43,7 @@ class Program():
     def __init__(self, title, type1):
         self.title = title      #title of program
         self.type1 = type1      #0 for major, 1 for minor, 2 for concentration
-        self.req = []           #list of required classes for program
+        self.req = set()        #list of required classes for program
         self.cons = ""          #concentration within major ("" for minors or concentrations)
 
 
@@ -81,14 +90,10 @@ class Schedule():
         
 
 def addClassToSchedule(course, schedule, semNum):   #semNum is a number of what semester we are adding this class
-    add = True
     sem = schedule.sched[semNum]
-    for prereq in course.prereqs:
-        if prereq not in sem.taken:
-            add = False
-    if add == True and sem.addClass(course):
+    if sem.addClass(course):
         if semNum < len(self.sched)-1:
-            self.sched[semNum +1].taken.add(course)  #adds course to next semesters taken courses
+            self.sched[semNum +1].taken.add(course) #adds course to next semesters taken courses
         if course.category == "hum":
             schedule.humanities.add(course.dep)
         elif course.category == "ss":
@@ -98,6 +103,10 @@ def addClassToSchedule(course, schedule, semNum):   #semNum is a number of what 
         schedule.wint -= course.wint
         schedule.cd -= course.cd
         schedule.qfr -= course.qfr
+        for nextclasses in course.above:            #removing from prereq because we know we have already taken  
+            nextclasses.prereqs.remove(course)
+        for prog in course.programs:                #remove course from program requirements
+            prog.req.remove(course)
         return True
     return False
     
@@ -113,8 +122,43 @@ def addClassToSchedule(course, schedule, semNum):   #semNum is a number of what 
 #len(schedule.natsc)i >= 2
 def main():
     #webscraping + initial user interface
-    required = [] #list of required courses based off major(s)/minor(s) chosen
+    requiredList = [] #list of required courses based off major(s)/minor(s) chosen
+    programList = []
     honors = 0    #binary to determine whether to leave room senior year for honors
+    requiredQ = PriorityQueue()
+    programQ = PriorityQueue()
+    schedule = Schedule(semLeft)
+    #Make priority queue of classes
+    for course in requiredList:
+        requiredQ.put((len(course.prereqs), course))
+    #
+    i = 0
+    while requiredQ.qsize() != 0:    
+        reqnum, course = requiredQ.get()
+        requiredQ.pop()
+        if(reqnum == 0 and addClassToSchedule(course, schedule, i)):
+            print("class added")
+        elif(reqnum != 0): #BACKTRACK
+            print("need to backtrack")
+        else:
+            #need to figure out what course conflicts with the one we were trying to add
+            print("time to guess")
+            
+        i+=1
+        #make new priorityqueue
+        requiredQ = PriorityQueue()
+        if i < semLeft:
+            nextsem = schedule.sched[i]
+            for course in requiredList:
+                if course not in nextsem.taken:
+                    requiredQ.put((len(course.prereqs), course))
+            
+
+
+    #After we add in the required classes to schedule    
+    #Make priority queue of programs
+    for prog in programList:
+        programQ.put((len(prog.req), prog)
 
     
     
