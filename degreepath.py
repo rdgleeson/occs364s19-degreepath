@@ -171,7 +171,7 @@ def main():
     
     
     #####################################################################################################
-    requiredList = [] #list of required courses based off major(s)/minor(s) chosen
+    requiredSet = set() #set of required courses based off major(s)/minor(s) chosen
     programList = []
     honors = 0    #binary to determine whether to leave room senior year for honors
     requiredQ = PriorityQueue()
