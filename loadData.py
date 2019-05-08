@@ -45,21 +45,36 @@ def loadReq(directory):
     return d
     
 def readClasses(directory):
-    
+    global classes
     #order of labels is: NUMB, SEC, CRN, HRS, MOD, TITLE, DAYS, TIME, BLDG, INSTRUCTOR
     for filename in os.listdir(directory):
             paren1 = '('
             paren2 = ')'
-    
+            
             if(filename==".DS_Store"):
                 continue
+            
+            file = directory + "/" + filename
+            
             a = filename.split(" ")
             #print(a)
             b = a[len(a)-1].split(".")
             c = b[0][1:len(b[0])-1]
             
             department = c
-            print(department)
+            
+            dataset = pandas.read_excel(file)
+            array = dataset.values
+            for x in array:
+                #cid, dep, wint, cd, qfr, ch, cat):
+                courseID = department + " " + str(x[0])
+                creditHours = x[3]
+
+                value = [courseID, department, 0, 0, 0, creditHours, ""]
+                classes[courseID] = value
+                
+                
+            
             '''file = directory + "/" + filename
             dataset = pandas.read_excel(file)
             array = dataset.values
@@ -92,14 +107,18 @@ def main():
    
     #{"course id exp CSCI 150": course()}
     directory = "class_schedules_fall_2019"
-    
+    readClasses(directory)
     
     directory = "class_schedules_fall_2018"
+    readClasses(directory)
     
     directory = "class_schedules_spring_2019"
     readClasses(directory)
+    
     directory = "class_schedules_spring_2018"
+    readClasses(directory)
     
-    
+    global classes
+    print(classes)
     
 main()
