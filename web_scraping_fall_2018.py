@@ -151,7 +151,7 @@ def main():
         if(len(newL)==0):
             continue
         else:
-            df = pd.DataFrame.from_records(newL)
+            df = pd.DataFrame.from_records(newL, labels)
             data.append(df)
             result = pd.concat(data)
             file = "class_schedules_fall_2018/" + headers[counter] + ".xlsx"
