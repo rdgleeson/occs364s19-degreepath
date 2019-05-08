@@ -11,6 +11,8 @@ import os
 
 classes = {}
 
+    
+
 '''
 def loadReq(directory):
     d = {}
@@ -44,7 +46,7 @@ def loadReq(directory):
             d.add(s[0][0:len(s[0])-1])
     return d
     
-def readClasses(directory):
+def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr):
     global classes
     #order of labels is: NUMB, SEC, CRN, HRS, MOD, TITLE, DAYS, TIME, BLDG, INSTRUCTOR
     for filename in os.listdir(directory):
@@ -69,8 +71,20 @@ def readClasses(directory):
                 #cid, dep, wint, cd, qfr, ch, cat):
                 courseID = department + " " + str(x[0])
                 creditHours = x[3]
+                
+                wint = 0
+                cd = 0
+                qfr = 0
+                
+                if (courseID in dict_wint or courseID in dict_wadv):
+                    wint = 1
+                if (courseID in dict_cd):
+                    cd = 1
+                if (courseID in dict_qfr):
+                    qfr = 1
+                
 
-                value = [courseID, department, 0, 0, 0, creditHours, ""]
+                value = [courseID, department, wint, cd, qfr, creditHours, ""]
                 classes[courseID] = value
                 
                 
@@ -88,7 +102,7 @@ def readClasses(directory):
 
 def main():
     #webscraping + initial user interface
-    
+
     #return dictionary
     directory = "writing_intensive.xlsx"
     dict_wint = loadReq(directory)
@@ -104,21 +118,22 @@ def main():
     
     #print(dict_wint)
     
-   
     #{"course id exp CSCI 150": course()}
     directory = "class_schedules_fall_2019"
-    readClasses(directory)
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr)
     
     directory = "class_schedules_fall_2018"
-    readClasses(directory)
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
     
     directory = "class_schedules_spring_2019"
-    readClasses(directory)
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
     
     directory = "class_schedules_spring_2018"
-    readClasses(directory)
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
     
+    print()
     global classes
     print(classes)
+    print(classes["ANTH 353"])
     
 main()
