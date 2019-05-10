@@ -126,7 +126,7 @@ def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, year):
             '''
 
 
-def readMajorRequirements(directory,prog):
+def readProgramRequirements(directory):
     required_classes = set()
     electives = set()
     num_elec_req = 0
@@ -152,11 +152,12 @@ def readMajorRequirements(directory,prog):
         else:
             course_dict[item[0]+' '+str(int(item[1]))] = [item[3]]
 
-    print("the total number of required classes",num_total_req)
-    print("The prereqs are:",course_dict)
-    print(num_elec_req)
-    print("The electives are:",electives)
-    print("The required classes",required_classes)
+    return num_total_req, course_dict, num_elec_req, electives, required_classes
+    #print("the total number of required classes",num_total_req)
+    #print("The prereqs are:",course_dict)
+    #print(num_elec_req)
+    #print("The electives are:",electives)
+    #print("The required classes",required_classes)
 
 
 
@@ -199,15 +200,17 @@ def main():
     #major requirements
     #cs
     directory = "csci_major_requirements.xlsx"
-    readMajorRequirements(directory,"csci")
+    readProgramRequirements(directory)
 
     directory = "csci_minor_requirements.xlsx"
-    readMajorRequirements(directory,"csci")
+    readProgramRequirements(directory)
 
+    directory = "math_minor_requirements.xlsx"
+    readProgramRequirements(directory)
 
     print()
     global classes
-    #print(classes)
+    print(classes)
     #print(classes["ANTH 353"])
 
 main()
