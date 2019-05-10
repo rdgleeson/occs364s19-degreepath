@@ -11,6 +11,7 @@ import os
 
 classes = {}
 
+from myClasses import Course
     
 
 '''
@@ -46,7 +47,7 @@ def loadReq(directory):
             d.add(s[0][0:len(s[0])-1])
     return d
     
-def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr):
+def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, year):
     global classes
     #order of labels is: NUMB, SEC, CRN, HRS, MOD, TITLE, DAYS, TIME, BLDG, INSTRUCTOR
     for filename in os.listdir(directory):
@@ -71,7 +72,22 @@ def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr):
                 #cid, dep, wint, cd, qfr, ch, cat):
                 courseID = department + " " + str(x[0])
                 creditHours = x[3]
+                days = x[5]
                 
+                
+                try:
+                    startTime = x[7]
+                    endTime = x[8][0:(len(x[8])-2)]
+                    stime = int(startTime[0:2]) + (int(startTime[2:4]))/60
+                    etime = int(endTime[0:2]) + (int(endTime[2:4]))/60
+                except:
+                    continue
+                    
+                if(endTime[4:6]=="pm" and eval(endTime[0:2])!=12):
+                    etime+=12
+                
+                timeList = [days, stime, etime]
+                time = {year: [days, stime, etime]}
                 wint = 0
                 cd = 0
                 qfr = 0
@@ -83,9 +99,20 @@ def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr):
                 if (courseID in dict_qfr):
                     qfr = 1
                 
-
-                value = [courseID, department, wint, cd, qfr, creditHours, ""]
-                classes[courseID] = value
+                
+                
+                if courseID in classes.keys():
+                    #classes[courseID].append(time)
+                    
+                    course = classes[courseID]
+                    if year in course.days.keys():
+                        course.days[year].append(timeList)
+                    else:
+                        course.days[year] = timeList
+                    
+                else:
+                    value = Course(courseID, department, wint, cd, qfr, creditHours, time, "")
+                    classes[courseID] = value
                 
                 
             
@@ -120,16 +147,16 @@ def main():
     
     #{"course id exp CSCI 150": course()}
     directory = "class_schedules_fall_2019"
-    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr)
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, 2)
     
     directory = "class_schedules_fall_2018"
-    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, 0)
     
     directory = "class_schedules_spring_2019"
-    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, 3)
     
     directory = "class_schedules_spring_2018"
-    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr )
+    readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, 1)
     
     print()
     global classes
