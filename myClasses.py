@@ -5,7 +5,7 @@ Created on Thu May  9 20:26:42 2019
 
 @author: JayMessina
 """
-
+from loadData import classes
 #an individual class
 class Course():
     def __init__(self, cid, dep, wint, cd, qfr, ch, days, cat):
@@ -16,7 +16,7 @@ class Course():
         self.wint = wint
         self.cd = cd
         self.qfr = qfr
-        self.creditHours = ch
+        self.creditHours = 4
         self.category = cat     #a string of the category it is in hum, ss, ns
         self.programs = []
         self.above = []         #a list of classes that this is the prereq of
@@ -34,6 +34,18 @@ class Course():
             return True
         else:
             return False
+
+    def __gt__(self,other):
+        return True
+        
+    def __lt__(self, other):
+        return False
+        
+    def __le__(self, other):
+        return False
+    
+    def __ge__(self, other):
+        return False
 
     def addProgram(self, prog):
         self.programs.append(prog)
@@ -60,20 +72,28 @@ class Semester():
 
     def addClass(self, clas, currentsem):
         conflict = False
-        for course in self.classes:
-            coursetimes = course.days[currentsem]
-            clastimes = clas.days[currentsem]
-            for time in coursetimes:  
-                for time2 in clas.days:
-                    if time[0] == time2[0]:
-                        if time2[1] > time[1] and time2[1] < time[2]:           #Start of added course is between the start and end of a course already in the semester 
-                            conflict = True
-        if conflict == False and self.maxx >= (self.hours + clas.creditHours):
-            self.classes.append(clas)
-            self.hours += clas.creditHours
-            return True
-        return False
-
+        try:
+            for courseStr in self.classes:
+                course = classes[courseStr]
+                coursetimes = course.days[currentsem]
+                clastimes = clas.days[currentsem]
+                for day in coursetimes:
+                    currentTimes = coursetimes[day]
+                    try:
+                        addedTimes = clastimes[day] 
+                    except: #this means they dont conflict on day
+                        continue
+                    for time in currentTimes:
+                        for time2 in addedTimes:
+                            if (time2[0] > time[0] and time2[0] < time[1]) or (time[0] > time2[0] and time[0] < time2[1]):           #Start of added course is between the start and end of a course already in the semester 
+                                conflict = True
+            if conflict == False:
+                self.classes.append(clas.cid)
+                #self.hours += clas.creditHours
+                return True
+            return False
+        except:
+            return False
 #a students schedule
 class Schedule():
     def __init__(self, semLeft, currentsem):
