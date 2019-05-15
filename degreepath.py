@@ -382,10 +382,12 @@ def main():
     #After we add in the required classes to schedule
     i = 0
     semnum = 0
+    
     for sem in schedule.sched:
-        print("Semester ", i+1)
+        print("Semester", i+1)
         for courseStr in sem.classes:
-            print(courseStr, classes[courseStr].days[semnum])
+            print(courseStr + " ", end = " ")
+            #classes[courseStr].days[semnum])
             course = classes[courseStr]
             if course.category == "hum":
                 schedule.humanities.add(course.dep)
@@ -393,6 +395,7 @@ def main():
                 schedule.socialsci.add(course.dep)
             else:
                 schedule.natsci.add(course.dep)
+        print()
         i+=1
         if semnum == 3:
             semnum = 0
