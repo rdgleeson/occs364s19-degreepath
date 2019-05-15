@@ -10,6 +10,10 @@ import pandas
 import os
 
 classes = {}
+dict_wint = {}
+dict_cd = {}
+dict_wadv = {}
+dict_qfr = {}
 
 #import myClasses
 #from myClasses import Course
@@ -192,6 +196,8 @@ def readClasses(directory, dict_wint, dict_cd, dict_wadv, dict_qfr, year):
                     endTime = x[8][0:(len(x[8])-2)]
                     stime = int(startTime[0:2]) + (int(startTime[2:4]))/60
                     etime = int(endTime[0:2]) + (int(endTime[2:4]))/60
+                    stime = round(stime, 2)
+                    etime = round(etime, 2)
                 except:
                     continue
 
@@ -287,6 +293,10 @@ def readProgramRequirements(directory):
 def main():
     #webscraping + initial user interface
 
+    global dict_wint 
+    global dict_cd 
+    global dict_wadv
+    global dict_qfr  
     #return dictionary
     directory = "writing_intensive.xlsx"
     dict_wint = loadReq(directory)
@@ -299,6 +309,7 @@ def main():
 
     directory = "QFR.xlsx"
     dict_qfr = loadReq(directory)
+    
 
     #print(dict_wint)
 
