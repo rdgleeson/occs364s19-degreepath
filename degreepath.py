@@ -78,10 +78,13 @@ def main():
     global classes
     semLeft = 8 #sys.argv[1]
     i = 0 #sys.argv[2]
-    majorsstring = input("Enter your intended major(s)")
+    majorsstring = input("Enter your intended major(s) EX.(CSCI MATH)")
+    majorsstring = majorsstring.lower()
     majors = majorsstring.split(" ")
-    minorsstring = input("Enter your intended minor(s)")
-    minors = minorsstring.split(" ")
+    #minorsstring = input("Enter your intended minor(s)")
+    #minorsstring = minorsstring.lower()
+    #minors = minorsstring.split(" ")
+    minors = []
     preferences = ["ECON", "HIST", "ENVS", "PHIL", "POLT"]
     #webscraping + initial user interface
     requiredSet = set() #set of required courses based off major(s)/minor(s) chosen
@@ -95,6 +98,17 @@ def main():
                 classes[key.upper()].prereqs = course_dict[key][0].upper().split(", ")
             except:
                 continue
+            
+#    for minor in minors:
+#        filename = minor + "_minor_requirements.xlsx"
+#        num_total_req, course_dict, num_elec_req, electives, required_classes = loadData.readProgramRequirements(filename)
+#        for course in required_classes:
+#            requiredSet.add(course.upper())
+#        for key in course_dict.keys():
+#            try:
+#                classes[key.upper()].prereqs = course_dict[key][0].upper().split(", ")
+#            except:
+#                continue
     #####################################################################################################
     
     programList = []
